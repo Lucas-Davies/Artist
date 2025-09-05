@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Gallery — Jody Graham</title>
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+<header>
+  <div class="wrap nav" role="navigation" aria-label="Primary">
+    <a class="brand" href="index.html">Jody Graham</a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="mainmenu">Menu</button>
+    <nav id="mainmenu" class="menu" aria-label="Main menu">
+      <a href="index.html">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="virtual.html">Virtual Gallery</a>
+      <a href="teaching.html">Learn</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="press.html">Press</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap">
+  <h2>Gallery</h2>
+  <div class="filters" role="toolbar" aria-label="Filter">
+    <button class="pill" data-filter="all" aria-pressed="true">All</button>
+    <button class="pill" data-filter="Getting Pinked">Getting Pinked</button>
+    <button class="pill" data-filter="Burnt">Burnt</button>
+    <button class="pill" data-filter="Fly like a Bird">Fly like a Bird</button>
+    <button class="pill" data-filter="Behind the Facade">Behind the Facade</button>
+  </div>
+  <div id="galleryGrid" class="grid"></div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true" aria-modal="true" role="dialog">
+  <div class="lb-dialog" role="document">
+    <div class="lb-media"><img id="lbImg" alt=""></div>
+    <div class="lb-caption">
+      <div>
+        <div class="lb-title" id="lbTitle" style="font-weight:700">Title</div>
+        <div class="lb-note" id="lbNote" style="color:var(--muted);font-size:.95rem"></div>
+      </div>
+      <div class="lb-links">
+        <a id="lbLink" class="btn" rel="noopener" target="_blank">View on jodygraham.art</a>
+        <button class="btn" id="lbClose">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div>
+</footer>
+<script src="assets/app.js"></script>
+<script type="module">
+  import { renderGalleryGrid } from './assets/gallery.js';
+  renderGalleryGrid('galleryGrid');
+</script>
+</body>
+</html>
