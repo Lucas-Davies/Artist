@@ -2,11 +2,42 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Login — Jody Graham</title>
 <link rel="stylesheet" href="assets/styles.css" />
+
+<!-- Page-scoped layout polish -->
+<style>
+  :root{
+    --surface:#0f1219; --stroke:rgba(255,255,255,.16);
+    --ink:#eef3ff; --muted:rgba(238,243,255,.72);
+  }
+  /* Center the auth card nicely on desktop and mobile */
+  .auth-wrap{min-height:100dvh; display:grid; place-items:center; padding:24px}
+  .auth-card{
+    width:100%; max-width:640px;
+    background:var(--surface); border:1px solid var(--stroke); border-radius:16px;
+    padding:22px; box-shadow:0 18px 48px rgba(0,0,0,.45);
+  }
+  .auth-card h2{margin:0 0 14px 0}
+  .auth-grid{display:grid; gap:12px}
+  .auth-row{display:grid; gap:6px}
+  .auth-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+  #loginEmail,#loginPass{
+    width:100%; padding:12px; border-radius:10px; border:1px solid var(--stroke);
+    background:#0b0f16; color:var(--ink);
+  }
+  #authMsg{
+    display:none; margin:8px 0 0 0; padding:10px; border-radius:10px; font-size:14px;
+    border:1px solid rgba(255,255,255,.18);
+  }
+  .lede{color:var(--muted); margin:.2rem 0 0}
+  /* Give the whole page some breathing room below header/footer */
+  main{width:100%}
+</style>
 </head>
 <body>
+
 <header>
   <div class="wrap nav">
     <a class="brand" href="index.html">Jody Graham</a>
@@ -19,45 +50,47 @@
   </div>
 </header>
 
-<section class="wrap" style="max-width:640px">
-  <h2>Member Login</h2>
+<main class="auth-wrap">
+  <section class="auth-card">
+    <h2>Member Login</h2>
 
-  <div class="list">
-    <!-- GUEST VIEW -->
-    <article class="item" data-guest>
-      <form id="loginForm" onsubmit="authLogin(event)">
-        <label for="loginEmail">Email</label>
-        <input id="loginEmail" type="email" autocomplete="username" required
-               style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--stroke)">
+    <div class="auth-grid">
+      <!-- GUEST VIEW -->
+      <article data-guest>
+        <form id="loginForm" onsubmit="authLogin(event)">
+          <div class="auth-row">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" autocomplete="username" required />
+          </div>
 
-        <div style="height:10px"></div>
+          <div class="auth-row">
+            <label for="loginPass">Password</label>
+            <input id="loginPass" type="password" autocomplete="current-password" required minlength="8" />
+          </div>
 
-        <label for="loginPass">Password</label>
-        <input id="loginPass" type="password" autocomplete="current-password" required minlength="8"
-               style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--stroke)">
+          <!-- Inline messages appear here -->
+          <div id="authMsg" role="alert" aria-live="polite"></div>
 
-        <!-- message area gets inserted just below this form by auth.js/diagnostics -->
-        <div style="height:14px"></div>
+          <div class="auth-actions" style="margin-top:6px">
+            <button class="btn primary" type="submit">Log in</button>
+            <button id="signupBtn" class="btn" type="button" onclick="authSignup(event)">Sign up</button>
+            <a class="btn" href="#" onclick="authResetPassword();return false;">Forgot password</a>
+          </div>
+          <p class="lede">New here? Press “Sign up” to create an account.</p>
+        </form>
+      </article>
 
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn primary" type="submit">Log in</button>
-          <button class="btn" type="button" onclick="authSignup(event)">Sign up</button>
-          <a class="btn" href="#" onclick="authResetPassword();return false;">Forgot password</a>
+      <!-- MEMBER VIEW -->
+      <article data-member style="display:none">
+        <p>You’re logged in as <strong id="whoami">Member</strong>.</p>
+        <div class="auth-actions">
+          <a class="btn ok" href="member.html">Go to Member Area</a>
+          <button class="btn" type="button" onclick="authLogout()">Log out</button>
         </div>
-        <p class="lede">New here? Press “Sign up” to create an account.</p>
-      </form>
-    </article>
-
-    <!-- MEMBER VIEW -->
-    <article class="item" data-member style="display:none">
-      <p>You’re logged in as <strong id="whoami">Member</strong>.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <a class="btn ok" href="member.html">Go to Member Area</a>
-        <button class="btn" type="button" onclick="authLogout()">Log out</button>
-      </div>
-    </article>
-  </div>
-</section>
+      </article>
+    </div>
+  </section>
+</main>
 
 <footer><div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div></footer>
 
@@ -66,37 +99,27 @@
 <!-- Supabase auth (must be after app.js) -->
 <script src="assets/auth.js"></script>
 
-<!-- Light diagnostics so errors show on the page (handy on iPad) -->
+<!-- Tiny diagnostics so errors show on page (handy on iPad) -->
 <script>
-  function _inlineMsg(msg, good){
-    var m = document.getElementById('authMsg') || (function(){
-      var d=document.createElement('div'); d.id='authMsg';
-      d.style.margin='12px 0'; d.style.padding='10px'; d.style.borderRadius='8px';
-      d.style.fontSize='14px'; d.style.display='block';
-      var form=document.getElementById('loginForm'); form.parentNode.insertBefore(d, form.nextSibling);
-      return d;
-    })();
-    if(good){
-      m.style.color='#e7fff0'; m.style.background='rgba(50,215,75,.08)'; m.style.border='1px solid rgba(50,215,75,.45)';
-    } else {
-      m.style.color='#fff1f1'; m.style.background='rgba(255,69,58,.10)'; m.style.border='1px solid rgba(255,69,58,.45)';
+  (function(){
+    function setMsg(txt, ok){
+      var m=document.getElementById('authMsg'); if(!m) return;
+      m.style.display='block';
+      if(ok){ m.style.color='#e7fff0'; m.style.background='rgba(50,215,75,.08)'; m.style.borderColor='rgba(50,215,75,.45)'; }
+      else  { m.style.color='#fff1f1'; m.style.background='rgba(255,69,58,.10)'; m.style.borderColor='rgba(255,69,58,.45)'; }
+      m.textContent=txt;
     }
-    m.textContent=msg;
-  }
-  window.onerror = function (msg, src, line, col, err) {
-    _inlineMsg('JS Error: ' + (err && err.message ? err.message : msg), false);
-  };
-  window.onunhandledrejection = function (e) {
-    var r = e && e.reason; _inlineMsg('Promise Error: ' + (r && r.message ? r.message : r), false);
-  };
-  // Sanity check: are handlers present?
-  document.addEventListener('DOMContentLoaded', function(){
-    if (typeof window.authLogin !== 'function' ||
-        typeof window.authSignup !== 'function' ||
-        typeof window.authLogout !== 'function') {
-      _inlineMsg('Auth handlers not found. Check that assets/auth.js loaded and contains SUPABASE_URL + anon key.', false);
-    }
-  });
+    window.onerror = (_, __, ___, ____, err) => setMsg('JS Error: ' + (err && err.message ? err.message : 'Unknown error'), false);
+    window.onunhandledrejection = (e) => { const r=e && e.reason; setMsg('Promise Error: ' + (r && r.message ? r.message : r), false); };
+
+    document.addEventListener('DOMContentLoaded', function(){
+      if (typeof window.authLogin !== 'function' ||
+          typeof window.authSignup !== 'function' ||
+          typeof window.authLogout !== 'function') {
+        setMsg('Auth not initialised. Check assets/auth.js and your Supabase URL + anon key.', false);
+      }
+    });
+  })();
 </script>
 </body>
 </html>
