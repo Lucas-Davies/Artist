@@ -4,8 +4,8 @@
 
 (function () {
   // ====== SET THESE TWO VALUES ======
-  const SUPABASE_URL = 'https://YOUR-REF.supabase.co';
-  const SUPABASE_ANON_KEY = 'YOUR-ANON-PUBLIC-KEY';
+const SUPABASE_URL = 'https://clwzbfndjglxqjatvdce.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNsd3piZm5kamdseHFqYXR2ZGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwOTQ4MTMsImV4cCI6MjA3MjY3MDgxM30.vQDDI9T8aMuK-VUrBeqYApXxqL9uHc-ggGPWRXmhuvw';
   // ==================================
 
   // Early warning if keys aren't set
