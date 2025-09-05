@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Login — Jody Graham</title>
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="index.html">Jody Graham</a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="mainmenu">Menu</button>
+    <nav id="mainmenu" class="menu">
+      <a href="index.html">Home</a><a href="gallery.html">Gallery</a><a href="virtual.html">Virtual Gallery</a>
+      <a href="teaching.html">Learn</a><a href="pricing.html">Pricing</a><a href="about.html">About</a>
+      <a href="press.html">Press</a><a href="contact.html">Contact</a><a href="login.html">Login</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap">
+  <h2>Member Login</h2>
+  <div class="list">
+    <article class="item" data-guest>
+      <form onsubmit="authLogin(event)">
+        <label>Email<br><input id="loginEmail" type="email" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--stroke)"></label><br><br>
+        <label>Password<br><input id="loginPass" type="password" required style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--stroke)"></label><br><br>
+        <button class="btn primary" type="submit">Log in</button>
+        <button class="btn" type="button" onclick="authSignup(event)">Sign up</button>
+      </form>
+      <p class="lede">New here? Press “Sign up” to create an account.</p>
+    </article>
+
+    <article class="item" data-member style="display:none">
+      <p>You’re logged in as <strong id="whoami">Member</strong>.</p>
+      <button class="btn" onclick="authLogout()">Log out</button>
+      <a class="btn ok" href="member.html">Go to Member Area</a>
+    </article>
+  </div>
+</section>
+
+<footer><div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div></footer>
+<script src="assets/app.js"></script>
+<!-- Supabase + auth logic -->
+<script src="assets/auth.js"></script>
+</body>
+</html>
