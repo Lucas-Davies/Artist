@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Catalogue — Jody Graham</title>
+<link rel="stylesheet" href="assets/styles.css" />
+<style>
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 16px}
+  .toolbar .pill{cursor:pointer}
+  .toolbar input[type="search"]{padding:10px 12px;border-radius:10px;border:1px solid var(--stroke);min-width:220px}
+  .toolbar select{padding:10px 12px;border-radius:10px;border:1px solid var(--stroke)}
+  .catalog{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+  @media (max-width:980px){.catalog{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:580px){.catalog{grid-template-columns:1fr}}
+  .c-card{border:1px solid var(--stroke);border-radius:16px;overflow:hidden;background:var(--bg)}
+  .c-card img{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface)}
+  .c-card .meta{padding:12px 14px}
+  .c-card h3{margin:0 0 6px;font-size:var(--s1)}
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-size:.85rem;font-weight:700;margin-right:8px}
+  .badge.avail{background:color-mix(in oklab,var(--ok) 35%, transparent); color:#0b0d12;border:1px solid var(--stroke)}
+  .badge.sold{background:#f2f4f8;color:#777;border:1px solid var(--stroke)}
+  .badge.res{background:#ffedd5;color:#7a3b00;border:1px solid var(--stroke)}
+  .row{margin:4px 0;color:var(--muted)}
+  .row strong{color:var(--ink)}
+  .empty{padding:20px;border:1px dashed var(--stroke);border-radius:12px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav" role="navigation" aria-label="Primary">
+    <a class="brand" href="index.html">Jody Graham</a>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="mainmenu">Menu</button>
+    <nav id="mainmenu" class="menu">
+      <a href="index.html">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="virtual.html">Virtual Gallery</a>
+      <a href="catalog.html">Catalogue</a>
+      <a href="teaching.html">Learn</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+      <a href="press.html">Press</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="wrap">
+  <h2>Catalogue</h2>
+  <div class="toolbar" role="toolbar" aria-label="Catalogue controls">
+    <input id="q" type="search" placeholder="Search title, series, medium…" />
+    <div class="filters">
+      <button class="pill" data-av="all" aria-pressed="true">All</button>
+      <button class="pill" data-av="available">Available</button>
+      <button class="pill" data-av="reserved">Reserved</button>
+      <button class="pill" data-av="sold">Sold</button>
+    </div>
+    <select id="byGallery">
+      <option value="">All galleries</option>
+    </select>
+    <select id="sortBy">
+      <option value="year-desc">Sort: Year ↓</option>
+      <option value="year-asc">Sort: Year ↑</option>
+      <option value="title-asc">Sort: Title A–Z</option>
+      <option value="title-desc">Sort: Title Z–A</option>
+    </select>
+  </div>
+
+  <div id="catalogGrid" class="catalog"></div>
+  <div id="empty" class="empty" style="display:none">No works match your filters.</div>
+</section>
+
+<footer><div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div></footer>
+<script src="assets/app.js"></script>
+<script type="module">
+import { CATALOG } from './assets/catalog.js';
+
+/* DOM */
+const grid = document.getElementById('catalogGrid');
+const empty = document.getElementById('empty');
+const q = document.getElementById('q');
+const sortBy = document.getElementById('sortBy');
+const byGallery = document.getElementById('byGallery');
+
+const avButtons = [...document.querySelectorAll('.pill[data-av]')];
+let state = { query:'', av:'all', gallery:'', sort:'year-desc' };
+
+/* Populate gallery dropdown */
+const galleries = Array.from(new Set(CATALOG.map(x=>x.gallery_name).filter(Boolean))).sort();
+galleries.forEach(g=>{
+  const opt = document.createElement('option'); opt.value = g; opt.textContent = g;
+  byGallery.appendChild(opt);
+});
+
+/* Events */
+q.addEventListener('input', ()=>{ state.query = q.value.trim().toLowerCase(); render(); });
+sortBy.addEventListener('change', ()=>{ state.sort = sortBy.value; render(); });
+byGallery.addEventListener('change', ()=>{ state.gallery = byGallery.value; render(); });
+avButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    avButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
+    btn.setAttribute('aria-pressed','true');
+    state.av = btn.dataset.av;
+    render();
+  });
+});
+
+/* Render */
+function card(a){
+  const badge = a.availability==='available' ? `<span class="badge avail">Available</span>`
+              : a.availability==='sold' ? `<span class="badge sold">Sold</span>`
+              : a.availability==='reserved' ? `<span class="badge res">Reserved</span>`
+              : '';
+  const gallery = a.gallery_name ? `<a class="btn" href="${a.gallery_url||'#'}" target="_blank" rel="noopener">${a.gallery_name}</a>` : '';
+  const price = (a.price_aud!=null) ? `A$${Number(a.price_aud).toLocaleString()}` : '';
+  return `
+  <article class="c-card">
+    <img src="${a.image}" alt="${a.title}">
+    <div class="meta">
+      <div>${badge}</div>
+      <h3>${a.title}</h3>
+      <div class="row"><strong>${a.series||''}</strong> • ${a.year||''}</div>
+      <div class="row">${[a.medium,a.size_cm].filter(Boolean).join(' • ')}</div>
+      <div class="row">${price}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        ${a.page_url ? `<a class="btn" href="${a.page_url}" target="_blank" rel="noopener">More info</a>` : ''}
+        ${gallery}
+      </div>
+    </div>
+  </article>`;
+}
+
+function render(){
+  // filter
+  let items = CATALOG.filter(a=>{
+    const t = (a.title||'') + ' ' + (a.series||'') + ' ' + (a.medium||'');
+    const matchesQ = !state.query || t.toLowerCase().includes(state.query);
+    const matchesAv = state.av==='all' || (a.availability===state.av);
+    const matchesG  = !state.gallery || (a.gallery_name===state.gallery);
+    return matchesQ && matchesAv && matchesG;
+  });
+
+  // sort
+  items.sort((a,b)=>{
+    switch(state.sort){
+      case 'year-asc':  return (a.year||0) - (b.year||0);
+      case 'year-desc': return (b.year||0) - (a.year||0);
+      case 'title-desc': return (b.title||'').localeCompare(a.title||'');
+      case 'title-asc':
+      default: return (a.title||'').localeCompare(b.title||'');
+    }
+  });
+
+  // render
+  grid.innerHTML = items.map(card).join('');
+  empty.style.display = items.length ? 'none' : '';
+}
+render();
+</script>
+</body>
+</html>
