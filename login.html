@@ -9,50 +9,50 @@
 <style>
   :root{
     --ink:#eef3ff; --muted:rgba(238,243,255,.72);
-    --stroke:rgba(255,255,255,.16); --ok:#2ecc71; --surface:rgba(0,0,0,.30); /* 30% */
-  }
-  /* Lock the page; force dark appearance */
-  html, body { height:100%; background:#000; color:var(--ink); }
-  body{
-    margin:0;
-    overflow:hidden;                 /* no vertical or horizontal scroll */
-    background-image:url("assets/login-bg.jpg");   /* <-- save your image here */
-    background-size:cover; background-position:center; background-repeat:no-repeat;
-    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    --stroke:rgba(255,255,255,.16);
+    --ok:#2ecc71; --danger:#ff5b62; --surface:rgba(0,0,0,.30);
   }
 
-  /* Center the card on all devices */
-  .auth-wrap{ min-height:100svh; min-height:100dvh; display:grid; place-items:center; padding:24px; }
+  html, body { height:100%; margin:0; overflow:hidden; }
+  body {
+    color:var(--ink);
+    background: linear-gradient(160deg,#0b0d12 0%,#141722 50%,#0b0d12 100%),
+                url("assets/login-bg.jpg") center center no-repeat;
+    background-size:100% 100%; /* force fill, no bars */
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-  /* Card: 30% transparent black */
+  .auth-wrap{min-height:100svh;min-height:100dvh;display:grid;place-items:center;padding:24px}
   .auth-card{
-    width:100%; max-width:640px;
-    background:var(--surface);
-    border:1px solid var(--stroke);
-    backdrop-filter:saturate(120%) blur(2px);
-    border-radius:16px; padding:24px;
+    width:100%; max-width:640px; background:var(--surface); border:1px solid var(--stroke);
+    backdrop-filter:saturate(120%) blur(2px); border-radius:16px; padding:24px;
     box-shadow:0 18px 48px rgba(0,0,0,.55);
   }
-  .auth-grid{ display:grid; gap:14px }
-  .auth-row{ display:grid; gap:6px }
-  label{ color:var(--muted) }
-  #loginEmail,#loginPass{
-    width:100%; padding:12px; border-radius:10px;
-    border:1px solid var(--stroke); background:rgba(0,0,0,.45); color:var(--ink);
+  .auth-grid{display:grid;gap:14px}
+  .auth-row{display:grid;gap:6px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  label{color:var(--muted)}
+  input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{
+    width:100%; padding:12px; border-radius:10px; border:1px solid var(--stroke);
+    background:rgba(0,0,0,.45); color:var(--ink); outline:none;
   }
-  .auth-actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-  #authMsg{ display:none; margin:8px 0 0; padding:10px; border-radius:10px; font-size:14px; border:1px solid rgba(255,255,255,.18) }
-  .lede{ color:var(--muted); margin:.2rem 0 0 }
-
-  header, footer { position:relative; z-index:2; background:transparent }
-  /* Ensure nav stays visible over bg */
-  .nav a{ color:var(--ink) }
-
-  /* Tiny devices with keyboard: keep layout usable without page scrolling */
-  @media (max-height:560px){
-    .auth-wrap{ align-items:start; }
-    .auth-card{ margin-top:16px; }
-  }
+  .invalid{ border-color: rgba(255,91,98,.85)!important; box-shadow:0 0 0 3px rgba(255,91,98,.25) inset }
+  small.hint{ color:#ffb3b6; }
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
+       font-weight:700;border:1px solid transparent;cursor:pointer;text-decoration:none}
+  .btn.primary{background:#0A84FF;color:#fff}
+  .btn.ghost{background:rgba(0,0,0,.45);border:1px solid var(--stroke);color:var(--ink)}
+  .btn.ok{background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.55);color:#d9ffea}
+  .btn.outline-red{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+  .btn.outline{background:transparent;border:1px solid var(--stroke);color:#cfd5e6}
+  #authMsg{display:none;margin:8px 0 0;padding:10px;border-radius:10px;font-size:14px;border:1px solid rgba(255,255,255,.18)}
+  header,footer{position:relative;z-index:2;background:transparent}
+  .nav a{color:var(--ink)}
+  .modal{position:fixed;inset:0;display:none;place-items:center;z-index:10000;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+  .modal .card{width:min(92vw,520px);background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:16px;padding:20px;box-shadow:0 18px 48px rgba(0,0,0,.6)}
+  @media (max-height:560px){ .auth-wrap{align-items:start} .auth-card{margin-top:16px} }
 </style>
 </head>
 <body>
@@ -64,52 +64,100 @@
       <a href="index.html">Home</a><a href="gallery.html">Gallery</a><a href="virtual.html">Virtual Gallery</a>
       <a href="teaching.html">Learn</a><a href="pricing.html">Pricing</a><a href="about.html">About</a>
       <a href="press.html">Press</a><a href="contact.html">Contact</a>
-      <a href="login.html" id="loginLink">Login</a> <!-- text changes to 'Logged In' in green -->
+      <a href="login.html" id="loginLink">Login</a>
     </nav>
   </div>
 </header>
 
 <main class="auth-wrap">
   <section class="auth-card" role="main" aria-label="Member login">
-    <h2 style="margin:0 0 10px">Member Login</h2>
-
-    <div class="auth-grid">
-      <!-- GUEST VIEW -->
-      <article data-guest>
-        <form id="loginForm" onsubmit="authLogin(event)">
-          <div class="auth-row">
-            <label for="loginEmail">Email</label>
-            <input id="loginEmail" type="email" autocomplete="username" required />
-          </div>
-          <div class="auth-row">
-            <label for="loginPass">Password</label>
-            <input id="loginPass" type="password" autocomplete="current-password" required minlength="8" />
-          </div>
-
-          <div id="authMsg" role="alert" aria-live="polite"></div>
-
-          <div class="auth-actions" style="margin-top:6px">
-            <button class="btn primary" type="submit">Log in</button>
-            <button id="signupBtn" class="btn" type="button" onclick="authSignup(event)">Sign up</button>
-            <a class="btn" href="#" onclick="authResetPassword();return false;">Forgot password</a>
-          </div>
-          <p class="lede">New here? Press “Sign up” to create an account.</p>
-        </form>
-      </article>
-
-      <!-- MEMBER VIEW -->
-      <article data-member style="display:none">
-        <p>You’re logged in as <strong id="whoami">Member</strong>.</p>
-        <div class="auth-actions">
-          <a class="btn ok" href="index.html">Go to Home</a>
-          <button class="btn" type="button" onclick="authLogout()">Log out</button>
-        </div>
-      </article>
-    </div>
+    <div id="authBody"><!-- JS renders cards here --></div>
   </section>
 </main>
 
 <footer><div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div></footer>
+
+<!-- Templates -->
+<template id="tpl-login">
+  <h2>Member Login</h2>
+  <div class="auth-grid">
+    <form id="loginForm">
+      <div class="auth-row">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" required />
+      </div>
+      <div class="auth-row">
+        <label for="loginPass">Password</label>
+        <input id="loginPass" type="password" required minlength="8" />
+      </div>
+      <div id="authMsg" role="alert"></div>
+      <div class="row" style="margin-top:6px">
+        <button class="btn primary" id="btnLogin">Log in</button>
+        <button class="btn ghost" id="btnGoSignup" type="button">Sign up</button>
+        <a class="btn ghost" href="#" id="btnReset">Forgot password</a>
+      </div>
+    </form>
+  </div>
+</template>
+
+<template id="tpl-signup">
+  <h2>Sign Up</h2>
+  <form id="signupForm" class="auth-grid" novalidate>
+    <div class="auth-row">
+      <label>First Name *</label>
+      <input id="suFirst" type="text" required />
+      <small class="hint" id="errFirst" style="display:none">First name is required.</small>
+    </div>
+    <div class="auth-row">
+      <label>Surname *</label>
+      <input id="suLast" type="text" required />
+      <small class="hint" id="errLast" style="display:none">Surname is required.</small>
+    </div>
+    <div class="auth-row">
+      <label>Email *</label>
+      <input id="suEmail" type="email" required />
+      <small class="hint" id="errEmail" style="display:none">Valid email required.</small>
+    </div>
+    <div class="auth-row">
+      <label>Password *</label>
+      <input id="suPass" type="password" required minlength="8" />
+      <small class="hint" id="errPass" style="display:none">Min 8 characters.</small>
+    </div>
+    <div class="auth-row">
+      <label>Australian Mobile (optional)</label>
+      <input id="suMobile" type="tel" />
+      <small class="hint" id="errMobile" style="display:none">Enter valid AU mobile.</small>
+    </div>
+    <div class="row">
+      <button class="btn ok" id="btnDoSignup" type="submit">Sign Up</button>
+      <button class="btn outline" id="btnCancelSignup" type="button">Cancel</button>
+    </div>
+  </form>
+</template>
+
+<template id="tpl-success">
+  <h2>Sign Up</h2>
+  <p>Please check your email inbox for a confirmation link to finish creating your account.</p>
+  <div class="row"><a class="btn ok" href="index.html">Go to Home</a></div>
+</template>
+
+<template id="tpl-emailused">
+  <h2>Sign Up</h2>
+  <p>Email address already in use.</p>
+  <div class="row"><button class="btn outline" id="btnBackToSignup" type="button">Back</button></div>
+</template>
+
+<!-- Logout confirm modal -->
+<div id="logoutModal" class="modal">
+  <div class="card">
+    <h3>Confirm logout</h3>
+    <p>Are you sure you want to log out?</p>
+    <div class="row">
+      <button class="btn outline-red" id="btnConfirmLogout">Log Out</button>
+      <button class="btn outline" id="btnCancelLogout">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <script src="assets/app.js"></script>
 <script src="assets/auth.js"></script>
