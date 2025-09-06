@@ -14,14 +14,15 @@
   }
 
   html, body { height:100%; margin:0; overflow:hidden; }
-  body {
+  body{
     color:var(--ink);
+    /* fallback */
     background: linear-gradient(160deg,#0b0d12 0%,#141722 50%,#0b0d12 100%),
-                url("assets/login-bg.jpg") center center no-repeat;
-    background-size:100% 100%; /* force fill, no bars */
+                url("assets/login-bg.jpg?v=3") center center no-repeat;
+    /* force fill, no bars; stretching is ok for this hero image */
+    background-size:100% 100%;
     background-attachment:fixed;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
 
   .auth-wrap{min-height:100svh;min-height:100dvh;display:grid;place-items:center;padding:24px}
@@ -37,9 +38,20 @@
   input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{
     width:100%; padding:12px; border-radius:10px; border:1px solid var(--stroke);
     background:rgba(0,0,0,.45); color:var(--ink); outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
-  .invalid{ border-color: rgba(255,91,98,.85)!important; box-shadow:0 0 0 3px rgba(255,91,98,.25) inset }
+  /* faint red outline for errors; keep the same look otherwise */
+  .invalid{ border-color: rgba(255,91,98,.55)!important; box-shadow:0 0 0 2px rgba(255,91,98,.18) inset; }
   small.hint{ color:#ffb3b6; }
+
+  /* kill Safari iOS yellow autofill */
+  input:-webkit-autofill{
+    -webkit-box-shadow:0 0 0px 1000px rgba(0,0,0,.45) inset !important;
+    -webkit-text-fill-color:var(--ink) !important;
+    caret-color:var(--ink) !important;
+    border:1px solid var(--stroke);
+  }
+
   .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
        font-weight:700;border:1px solid transparent;cursor:pointer;text-decoration:none}
   .btn.primary{background:#0A84FF;color:#fff}
@@ -47,6 +59,7 @@
   .btn.ok{background:rgba(46,204,113,.2);border:1px solid rgba(46,204,113,.55);color:#d9ffea}
   .btn.outline-red{background:transparent;border:1px solid var(--danger);color:var(--danger)}
   .btn.outline{background:transparent;border:1px solid var(--stroke);color:#cfd5e6}
+
   #authMsg{display:none;margin:8px 0 0;padding:10px;border-radius:10px;font-size:14px;border:1px solid rgba(255,255,255,.18)}
   header,footer{position:relative;z-index:2;background:transparent}
   .nav a{color:var(--ink)}
