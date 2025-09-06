@@ -2,91 +2,36 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Jody Graham — Works, Virtual Gallery & Learning</title>
-<link rel="stylesheet" href="assets/styles.css" />
-<meta name="description" content="Sydney-based multidisciplinary artist. Drawing-led practice across mixed media, installation and performance. Explore works, enter a virtual gallery, and learn with live classes and courses." />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Jody Graham — Homepage</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* no scroll */
+  }
+  body {
+    background: #000; /* fallback */
+  }
+  .hero {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* crop to fill */
+    object-position: center;
+    display: block;
+  }
+</style>
 </head>
 <body>
-<header>
-  <div class="wrap nav" role="navigation" aria-label="Primary">
-    <a class="brand" href="index.html">Jody Graham</a>
-    <button class="menu-toggle" aria-expanded="false" aria-controls="mainmenu" aria-label="Toggle menu">Menu</button>
-    <nav id="mainmenu" class="menu" aria-label="Main menu">
-      <a href="index.html" aria-current="page">Home</a>
-      <a href="gallery.html">Gallery</a>
-      <a href="virtual.html">Virtual Gallery</a>
-      <a href="teaching.html">Learn</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="about.html">About</a>
-      <a href="press.html">Press</a>
-      <a href="contact.html">Contact</a>
-      <a href="login.html">Login</a>
-    </nav>
+  <div class="hero">
+    <img src="assets/hero-jody.jpg" alt="Jody Graham artwork installation" />
   </div>
-</header>
-
-<main>
-  <!-- HERO -->
-  <section class="hero">
-    <picture>
-      <!-- optional smaller source for narrow screens -->
-      <source media="(max-width: 640px)" srcset="assets/hero-jody.jpg" />
-      <img src="assets/hero-jody.jpg" alt="Jody Graham creating a large-scale text-and-mark installation" loading="eager" />
-    </picture>
-    <div class="hero-copy">
-      <h1>Jody Graham</h1>
-      <p>Drawing-led practice across mixed media, installation & performance.</p>
-      <div class="cta-row">
-        <a class="btn" href="gallery.html">Explore Gallery</a>
-        <a class="btn ghost" href="virtual.html">Enter Virtual Gallery</a>
-        <a class="btn ghost" href="teaching.html">Learn with Jody</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- INTRO / STATEMENT -->
-  <section class="intro wrap">
-    <p class="lede">
-      Sydney-based artist investigating place, memory and the body through expansive mark-making,
-      found materials and participatory performance.
-    </p>
-  </section>
-
-  <!-- FEATURED LINKS -->
-  <section class="cards wrap" aria-label="Featured">
-    <a class="card" href="gallery.html">
-      <h3>Works</h3>
-      <p>Selected drawings, paintings and installations.</p>
-    </a>
-    <a class="card" href="virtual.html">
-      <h3>Virtual Gallery</h3>
-      <p>Walk a digital room of large-scale works.</p>
-    </a>
-    <a class="card" href="teaching.html">
-      <h3>Learning</h3>
-      <p>Workshops, classes and 30-day modules.</p>
-    </a>
-  </section>
-
-  <!-- NEWS / UPCOMING -->
-  <section class="news" aria-label="News and upcoming">
-    <div class="wrap">
-      <h2 class="sr-only">News & Upcoming</h2>
-      <ul class="ticker">
-        <li><strong>Upcoming:</strong> Life Drawing Intensive — bookings open now.</li>
-        <li><strong>Exhibition:</strong> New work from the “Mark / Memory” series.</li>
-        <li><strong>Course:</strong> 30-Day Drawing Habit — next cohort starts soon.</li>
-      </ul>
-      <a class="more" href="press.html">More news</a>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="wrap">© <span id="y"></span> Jody Graham. All rights reserved.</div>
-</footer>
-
-<script src="assets/app.js"></script>
 </body>
 </html>
