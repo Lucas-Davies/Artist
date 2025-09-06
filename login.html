@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="dark" />
 <title>Login — Jody Graham</title>
 <link rel="stylesheet" href="assets/styles.css" />
 <style>
@@ -16,40 +16,52 @@
   html, body { height:100%; margin:0; overflow:hidden; }
   body{
     color:var(--ink);
-    /* fallback */
-    background: linear-gradient(160deg,#0b0d12 0%,#141722 50%,#0b0d12 100%),
-                url("assets/login-bg.jpg?v=3") center center no-repeat;
-    /* force fill, no bars; stretching is ok for this hero image */
-    background-size:100% 100%;
-    background-attachment:fixed;
-    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    /* Absolute path to your Artist repo image */
+    background-image: url("https://lucas-davies.github.io/Artist/assets/login-bg.jpg"),
+                      linear-gradient(160deg,#0b0d12 0%,#141722 50%,#0b0d12 100%);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;   /* fill screen; no bars */
+    background-attachment: fixed;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* subtle dark overlay for readability */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.45));
+    pointer-events:none;
   }
 
-  .auth-wrap{min-height:100svh;min-height:100dvh;display:grid;place-items:center;padding:24px}
+  .auth-wrap{min-height:100svh;min-height:100dvh;display:grid;place-items:center;padding:24px;position:relative;z-index:1}
   .auth-card{
-    width:100%; max-width:640px; background:var(--surface); border:1px solid var(--stroke);
-    backdrop-filter:saturate(120%) blur(2px); border-radius:16px; padding:24px;
+    width:100%; max-width:640px;
+    background:var(--surface); border:1px solid var(--stroke);
+    backdrop-filter:saturate(120%) blur(2px);
+    border-radius:16px; padding:24px;
     box-shadow:0 18px 48px rgba(0,0,0,.55);
   }
+
   .auth-grid{display:grid;gap:14px}
   .auth-row{display:grid;gap:6px}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   label{color:var(--muted)}
-  input[type="text"],input[type="email"],input[type="password"],input[type="tel"]{
-    width:100%; padding:12px; border-radius:10px; border:1px solid var(--stroke);
+
+  input[type="text"], input[type="email"], input[type="password"], input[type="tel"]{
+    width:100%; padding:12px; border-radius:10px;
+    border:1px solid var(--stroke);
     background:rgba(0,0,0,.45); color:var(--ink); outline:none;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
-  /* faint red outline for errors; keep the same look otherwise */
+  /* faint red outline ONLY when invalid */
   .invalid{ border-color: rgba(255,91,98,.55)!important; box-shadow:0 0 0 2px rgba(255,91,98,.18) inset; }
   small.hint{ color:#ffb3b6; }
 
-  /* kill Safari iOS yellow autofill */
+  /* iOS autofill — remove yellow */
   input:-webkit-autofill{
     -webkit-box-shadow:0 0 0px 1000px rgba(0,0,0,.45) inset !important;
-    -webkit-text-fill-color:var(--ink) !important;
-    caret-color:var(--ink) !important;
-    border:1px solid var(--stroke);
+    -webkit-text-fill-color:var(--ink)!important; border:1px solid var(--stroke);
   }
 
   .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
@@ -61,11 +73,24 @@
   .btn.outline{background:transparent;border:1px solid var(--stroke);color:#cfd5e6}
 
   #authMsg{display:none;margin:8px 0 0;padding:10px;border-radius:10px;font-size:14px;border:1px solid rgba(255,255,255,.18)}
+
   header,footer{position:relative;z-index:2;background:transparent}
   .nav a{color:var(--ink)}
+  /* Hide items that require auth until JS flips them on */
+  [data-auth="in"]{ display:none; }
+
   .modal{position:fixed;inset:0;display:none;place-items:center;z-index:10000;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
   .modal .card{width:min(92vw,520px);background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:16px;padding:20px;box-shadow:0 18px 48px rgba(0,0,0,.6)}
+
   @media (max-height:560px){ .auth-wrap{align-items:start} .auth-card{margin-top:16px} }
+
+  /* eye toggles inside inputs */
+  .input-with-eye{ position:relative }
+  .eye{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    background:transparent; border:1px solid var(--stroke); color:#cfd5e6;
+    border-radius:10px; padding:4px 8px; font-size:12px; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -74,7 +99,8 @@
     <a class="brand" href="index.html">Jody Graham</a>
     <button class="menu-toggle" aria-expanded="false" aria-controls="mainmenu">Menu</button>
     <nav id="mainmenu" class="menu">
-      <a href="index.html">Home</a><a href="gallery.html">Gallery</a><a href="virtual.html">Virtual Gallery</a>
+      <a href="index.html">Home</a><a href="gallery.html">Gallery</a>
+      <a href="virtual.html" data-auth="in">Virtual Gallery</a> <!-- hidden until signed in -->
       <a href="teaching.html">Learn</a><a href="pricing.html">Pricing</a><a href="about.html">About</a>
       <a href="press.html">Press</a><a href="contact.html">Contact</a>
       <a href="login.html" id="loginLink">Login</a>
@@ -94,16 +120,17 @@
 <template id="tpl-login">
   <h2>Member Login</h2>
   <div class="auth-grid">
-    <form id="loginForm">
+    <form id="loginForm" novalidate>
       <div class="auth-row">
         <label for="loginEmail">Email</label>
         <input id="loginEmail" type="email" required />
       </div>
-      <div class="auth-row">
+      <div class="auth-row input-with-eye">
         <label for="loginPass">Password</label>
         <input id="loginPass" type="password" required minlength="8" />
+        <button type="button" class="eye" data-eye="#loginPass">Show</button>
       </div>
-      <div id="authMsg" role="alert"></div>
+      <div id="authMsg" role="alert" aria-live="polite"></div>
       <div class="row" style="margin-top:6px">
         <button class="btn primary" id="btnLogin">Log in</button>
         <button class="btn ghost" id="btnGoSignup" type="button">Sign up</button>
@@ -131,15 +158,22 @@
       <input id="suEmail" type="email" required />
       <small class="hint" id="errEmail" style="display:none">Valid email required.</small>
     </div>
-    <div class="auth-row">
+    <div class="auth-row input-with-eye">
       <label>Password *</label>
       <input id="suPass" type="password" required minlength="8" />
+      <button type="button" class="eye" data-eye="#suPass">Show</button>
       <small class="hint" id="errPass" style="display:none">Min 8 characters.</small>
+    </div>
+    <div class="auth-row input-with-eye">
+      <label>Confirm Password *</label>
+      <input id="suPass2" type="password" required minlength="8" />
+      <button type="button" class="eye" data-eye="#suPass2">Show</button>
+      <small class="hint" id="errPass2" style="display:none">Passwords must match.</small>
     </div>
     <div class="auth-row">
       <label>Australian Mobile (optional)</label>
       <input id="suMobile" type="tel" />
-      <small class="hint" id="errMobile" style="display:none">Enter valid AU mobile.</small>
+      <small class="hint" id="errMobile" style="display:none">Enter a valid AU mobile.</small>
     </div>
     <div class="row">
       <button class="btn ok" id="btnDoSignup" type="submit">Sign Up</button>
@@ -161,7 +195,7 @@
 </template>
 
 <!-- Logout confirm modal -->
-<div id="logoutModal" class="modal">
+<div id="logoutModal" class="modal" aria-hidden="true">
   <div class="card">
     <h3>Confirm logout</h3>
     <p>Are you sure you want to log out?</p>
